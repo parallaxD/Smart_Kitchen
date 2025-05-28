@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Результат</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        p { margin: 10px 0; }
+        a { color: #0066cc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Результат обработки</h1>
+    <h2>Рецепт: {{ result.name }}</h2>
+    
+    <p><strong>Ингредиенты:</strong></p>
+    <table>
+        <tr>
+            <th>Название</th>
+            <th>Количество</th>
+            <th>Единица</th>
+            <th>Тип</th>
+        </tr>
+        {% for ingredient in result.entities.ingredients %}
+        <tr>
+            <td>{{ ingredient.name }}</td>
+            <td>{{ ingredient.quantity }}</td>
+            <td>{{ ingredient.unit }}</td>
+            <td>{{ ingredient.type }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><strong>Шаги:</strong></p>
+    <table>
+        <tr>
+            <th>Шаг</th>
+            <th>Действие</th>
+            <th>Посуда</th>
+            <th>Длительность</th>
+        </tr>
+        {% for step in result.entities.steps %}
+        <tr>
+            <td>{{ step.step_number }}</td>
+            <td>{{ step.action }}</td>
+            <td>{{ step.equipment if step.equipment else "Нет" }}</td>
+            <td>{{ step.duration if step.duration else "Не указано" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><strong>Намерения:</strong> {{ result.intents | join(", ") }}</p>
+    <p><strong>Правила:</strong></p>
+    <ul>
+        {% for rule in result.rules %}
+        <li>{{ rule }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>План блюд</h2>
+    <p><strong>Подходящие рецепты:</strong></p>
+    <ul>
+        {% for recipe in meal_plan.suitable_recipes %}
+        <li>{{ recipe.name }}</li>
+        {% else %}
+        <li>Нет подходящих рецептов</li>
+        {% endfor %}
+    </ul>
+
+    <p><strong>Недостающие ингредиенты:</strong></p>
+    {% for recipe in meal_plan.missing_ingredients %}
+    <p>Для рецепта "{{ recipe.name }}":</p>
+    <table>
+        <tr>
+            <th>Ингредиент</th>
+            <th>Количество</th>
+            <th>Единица</th>
+        </tr>
+        {% for ingredient in recipe.missing %}
+        <tr>
+            <td>{{ ingredient.name }}</td>
+            <td>{{ ingredient.quantity }}</td>
+            <td>{{ ingredient.unit }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endfor %}
+
+    <a href="/">Вернуться</a>
+</body>
+</html>
